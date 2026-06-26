@@ -1,0 +1,81 @@
+name: Test and Validate
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    - cron: '0 0 * * 0' # 每周日凌晨测试
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 检出仓库
+        uses: actions/checkout@v4
+
+      - name: 验证文件结构
+        run: |
+          echo "验证必需文件..."
+          test -f .github/workflows/main.yml || (echo "❌ main.yml 不存在"; exit 1)
+          test -f _worker.js || (echo "❌ _worker.js 不存在"; exit 1)
+          test -f version.txt || (echo "❌ version.txt 不存在"; exit 1)
+          echo "✅ 所有必需文件存在"
+
+      - name: 验证版本格式
+        run: |
+          VERSION=$(cat version.txt)
+          if [[ "$VERSION" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "✅ 版本格式正确: $VERSION"
+          else
+            echo "❌ 版本格式错误: $VERSION (预期: vX.Y.Z)"
+            exit 1
+          fi
+
+      - name: 验证 Worker 文件
+        run: |
+          SIZE=$(wc -c < _worker.js)
+          if [ "$SIZE" -gt 1000 ]; then
+            echo "✅ Worker 文件大小正常: $SIZE 字节"
+          else
+            echo "❌ Worker 文件过小: $SIZE 字节"
+            exit 1
+          fi
+
+      - name: 测试 GitHub API 连接
+        run: |
+          API_URL="https://api.github.com/repos/bia-pain-bache/BPB-Worker-Panel/releases"
+          RESPONSE=$(curl -s --max-time 10 "$API_URL" || echo "[]")
+
+          if echo "$RESPONSE" | jq -e '.[0].tag_name' > /dev/null 2>&1; then
+            LATEST=$(echo "$RESPONSE" | jq -r '.[0].tag_name')
+            echo "✅ GitHub API 正常，最新版本: $LATEST"
+          else
+            echo "⚠️ GitHub API 响应异常 (可能是限流，可忽略)"
+          fi
+
+      - name: YAML 语法检查
+        run: |
+          # 使用 Python 内置 yaml 解析器
+          python3 -c "import yaml; yaml.safe_load(open('.github/workflows/main.yml'))" && \
+          echo "✅ YAML 语法正确" || \
+          (echo "❌ YAML 语法错误"; exit 1)
+
+      - name: Shell 脚本检查
+        run: |
+          chmod +x test_workflow.sh
+          if command -v shellcheck &> /dev/null; then
+            shellcheck test_workflow.sh && echo "✅ Shell 脚本检查通过" || echo "⚠️ Shell 脚本有警告"
+          else
+            echo "⚠️ shellcheck 未安装，跳过检查"
+          fi
+
+      - name: 运行测试脚本
+        run: |
+          chmod +x test_workflow.sh
+          ./test_workflow.sh

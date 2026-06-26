@@ -1,0 +1,26 @@
+# 临时文件
+*.zip
+*.tmp
+*.log
+
+# 操作系统文件
+.DS_Store
+Thumbs.db
+
+# IDE 文件
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Node.js (如果有)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# 环境变量文件
+.env
+.env.local
+.env.*.local
