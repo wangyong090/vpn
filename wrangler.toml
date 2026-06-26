@@ -2,9 +2,9 @@ name = "bpb-worker-panel"
 main = "_worker.js"
 compatibility_date = "2024-01-01"
 
-# Workers KV 存储（BPB Panel 必需）
+# Workers KV 存储（BPB Panel 必需，binding 必须为 "kv"）
 [[kv_namespaces]]
-binding = "WORKERS"
+binding = "kv"
 id = "67f4e16056c94b5b8b4edc70757afba1"
 
 # BPB Panel 核心配置
