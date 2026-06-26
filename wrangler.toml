@@ -2,14 +2,24 @@ name = "bpb-worker-panel"
 main = "_worker.js"
 compatibility_date = "2024-01-01"
 
-# 如果需要 KV 存储，取消下面的注释
-# [[kv_namespaces]]
-# binding = "WORKERS"
-# id = "your-kv-namespace-id"
+# Workers KV 存储（BPB Panel 必需）
+[[kv_namespaces]]
+binding = "WORKERS"
+id = "67f4e16056c94b5b8b4edc70757afba1"
 
-# 环境变量（可选）
-# [vars]
-# YOUR_VARIABLE = "value"
+# BPB Panel 核心配置
+[vars]
+# VLESS UUID（替换为您自己的）
+UUID = "d7674958-1d1e-4836-8b3d-3db896bea8e0"
+# Trojan 密码（替换为您自己的）
+TROJAN_PASSWORD = "JqsHdshiuUMOJAWJ"
+# 订阅路径（自定义，用于隐藏订阅链接）
+SUB_PATH = "6gdtiysu"
+
+# 高级配置（可选）
+# FALLBACK = "www.speedtest.net"  # 回退域名（伪装页面）
+# PROXYIP = ""                    # 代理 IP
+# NAT64_PREFIX = ""               # NAT64 前缀
 
 # Workers 日志（企业版功能，免费版需禁用）
 # logpush = true
