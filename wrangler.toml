@@ -1,0 +1,15 @@
+name = "bpb-worker-panel"
+main = "_worker.js"
+compatibility_date = "2024-01-01"
+
+# 如果需要 KV 存储，取消下面的注释
+# [[kv_namespaces]]
+# binding = "WORKERS"
+# id = "your-kv-namespace-id"
+
+# 环境变量（可选）
+# [vars]
+# YOUR_VARIABLE = "value"
+
+# Workers 日志
+logpush = true
