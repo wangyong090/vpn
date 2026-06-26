@@ -11,5 +11,5 @@ compatibility_date = "2024-01-01"
 # [vars]
 # YOUR_VARIABLE = "value"
 
-# Workers 日志
-logpush = true
+# Workers 日志（企业版功能，免费版需禁用）
+# logpush = true
